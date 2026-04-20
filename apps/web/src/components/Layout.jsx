@@ -27,13 +27,15 @@ export default function Layout() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('portfolio-theme');
-    return saved ? saved === 'dark' : true;
+    if (saved) return saved === 'dark';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
 
   useEffect(() => {
     const root = document.documentElement;
-    if (darkMode) root.classList.add('dark');
-    else root.classList.remove('dark');
+    root.classList.toggle('dark', darkMode);
+    root.classList.toggle('light', !darkMode);
+    root.style.colorScheme = darkMode ? 'dark' : 'light';
     localStorage.setItem('portfolio-theme', darkMode ? 'dark' : 'light');
   }, [darkMode]);
 

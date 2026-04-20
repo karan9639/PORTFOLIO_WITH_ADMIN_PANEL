@@ -38,3 +38,92 @@ body {
 .section-kicker {
   @apply mb-3 inline-flex items-center gap-2 rounded-full border border-teal-400/20 bg-teal-400/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-teal-200;
 }
+
+
+html.light {
+  color-scheme: light;
+}
+
+html.light body {
+  @apply bg-slate-50 text-slate-900;
+  background-image: radial-gradient(circle at top, rgba(13, 148, 136, 0.12), transparent 42%);
+}
+
+html.light .bg-slate-950 {
+  background-color: rgb(248 250 252) !important;
+}
+
+html.light .bg-slate-950\/80 {
+  background-color: rgba(248, 250, 252, 0.82) !important;
+}
+
+html.light .bg-slate-900\/95 {
+  background-color: rgba(255, 255, 255, 0.96) !important;
+}
+
+html.light .bg-slate-900\/70 {
+  background-color: rgba(255, 255, 255, 0.88) !important;
+}
+
+html.light .bg-slate-900\/60 {
+  background-color: rgba(255, 255, 255, 0.78) !important;
+}
+
+html.light .bg-white\/5 {
+  background-color: rgba(15, 23, 42, 0.04) !important;
+}
+
+html.light .border-white\/5 {
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+html.light .border-white\/10 {
+  border-color: rgba(15, 23, 42, 0.12) !important;
+}
+
+html.light .text-white,
+html.light .text-slate-100,
+html.light .text-slate-200 {
+  color: rgb(15 23 42) !important;
+}
+
+html.light .text-slate-300 {
+  color: rgb(71 85 105) !important;
+}
+
+html.light .text-slate-400 {
+  color: rgb(100 116 139) !important;
+}
+
+html.light .text-teal-200 {
+  color: rgb(15 118 110) !important;
+}
+
+html.light .bg-teal-400\/10 {
+  background-color: rgba(20, 184, 166, 0.10) !important;
+}
+
+html.light .bg-teal-400\/15 {
+  background-color: rgba(20, 184, 166, 0.14) !important;
+}
+
+html.light .border-teal-400\/20 {
+  border-color: rgba(13, 148, 136, 0.24) !important;
+}
+
+html.light .hover\:text-white:hover {
+  color: rgb(15 23 42) !important;
+}
+
+body,
+header,
+footer,
+button,
+a,
+input,
+textarea,
+[class*='bg-'],
+[class*='text-'],
+[class*='border-'] {
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+}
