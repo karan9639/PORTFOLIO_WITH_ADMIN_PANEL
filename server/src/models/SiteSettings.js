@@ -6,6 +6,8 @@ const schema = createSingletonSchema({
   siteDescription: { type: String, required: true },
   footerText: { type: String, default: '' },
   seoKeywords: [{ type: String }],
+  canonicalUrl: { type: String, default: '' },
+  ogImageUrl: { type: String, default: '' },
   resumeUrl: { type: String, default: '' },
   openToWork: { type: Boolean, default: true },
   testimonialsEnabled: { type: Boolean, default: false },

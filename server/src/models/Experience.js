@@ -6,6 +6,8 @@ const schema = createBaseCollectionSchema({
   role: { type: String, required: true },
   location: { type: String, default: '' },
   period: { type: String, required: true },
+  employmentType: { type: String, default: '' },
+  stack: [{ type: String }],
   current: { type: Boolean, default: false },
   description: { type: String, required: true },
   highlights: [{ type: String }],

@@ -2,6 +2,14 @@ import { Link, useParams } from 'react-router-dom';
 import LoadingScreen from '../components/LoadingScreen.jsx';
 import { useSiteData } from '../hooks/useSiteData.js';
 
+function Chip({ children, tone = 'default' }) {
+  const classes = tone === 'accent'
+    ? 'border-emerald-400/20 bg-emerald-400/10 text-emerald-200'
+    : 'border-white/10 text-slate-300';
+
+  return <span className={`rounded-full border px-3 py-1 text-sm ${classes}`}>{children}</span>;
+}
+
 export default function ProjectDetailsPage() {
   const { slug } = useParams();
   const { data, isLoading } = useSiteData();
@@ -30,10 +38,16 @@ export default function ProjectDetailsPage() {
           <div>
             <div className="section-kicker">Project spotlight</div>
             <h1 className="text-4xl font-semibold text-white">{project.title}</h1>
+            <div className="mt-4 flex flex-wrap gap-3">
+              {project.year ? <Chip>{project.year}</Chip> : null}
+              {project.projectType ? <Chip>{project.projectType}</Chip> : null}
+              {project.duration ? <Chip>{project.duration}</Chip> : null}
+              {project.status ? <Chip tone="accent">{project.status}</Chip> : null}
+            </div>
             <p className="mt-5 text-lg leading-8 text-slate-300">{project.description}</p>
-            <div className="mt-6 flex flex-wrap gap-3">
+            <div className="mt-6 flex flex-wrap gap-2">
               {(project.technologies || []).map((tech) => (
-                <span key={tech} className="rounded-full border border-white/10 px-3 py-1 text-sm text-slate-300">{tech}</span>
+                <Chip key={tech}>{tech}</Chip>
               ))}
             </div>
             {!!project.highlights?.length && (
@@ -46,6 +60,20 @@ export default function ProjectDetailsPage() {
                 </ul>
               </div>
             )}
+            <div className="mt-8 grid gap-4 sm:grid-cols-2">
+              {project.role ? (
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+                  <div className="text-sm text-slate-400">Role</div>
+                  <div className="mt-2 text-white">{project.role}</div>
+                </div>
+              ) : null}
+              {project.caseStudyUrl ? (
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+                  <div className="text-sm text-slate-400">Case study</div>
+                  <a href={project.caseStudyUrl} target="_blank" rel="noreferrer" className="mt-2 inline-flex text-teal-200 hover:text-teal-100">Open case study</a>
+                </div>
+              ) : null}
+            </div>
             <div className="mt-8 flex flex-wrap gap-4">
               {project.githubUrl ? <a href={project.githubUrl} target="_blank" rel="noreferrer" className="rounded-full bg-white px-6 py-3 font-semibold text-slate-950">GitHub</a> : null}
               {project.liveUrl ? <a href={project.liveUrl} target="_blank" rel="noreferrer" className="rounded-full border border-white/10 px-6 py-3 font-semibold text-white">Live demo</a> : null}

@@ -7,6 +7,8 @@ const schema = createSingletonSchema({
   story: { type: String, required: true },
   approach: { type: String, default: '' },
   profileImageUrl: { type: String, default: '' },
+  strengths: [{ type: String }],
+  interests: [{ type: String }],
   facts: [{ label: String, value: String }],
 });
 

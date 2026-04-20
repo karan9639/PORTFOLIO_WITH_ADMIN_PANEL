@@ -11,8 +11,12 @@ const schema = createBaseCollectionSchema({
   technologies: [{ type: String }],
   githubUrl: { type: String, default: '' },
   liveUrl: { type: String, default: '' },
+  caseStudyUrl: { type: String, default: '' },
   role: { type: String, default: '' },
   year: { type: String, default: '' },
+  duration: { type: String, default: '' },
+  projectType: { type: String, default: '' },
+  status: { type: String, default: '' },
   featured: { type: Boolean, default: false },
   highlights: [{ type: String }],
 });

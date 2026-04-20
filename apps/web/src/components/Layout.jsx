@@ -1,4 +1,4 @@
-import { Link, NavLink, Outlet } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import ThemeToggle from './ThemeToggle.jsx';
@@ -13,6 +13,15 @@ const navItems = [
   { label: 'Contact', href: '#contact' },
 ];
 
+function upsertMeta(selector, attributes) {
+  let tag = document.head.querySelector(selector);
+  if (!tag) {
+    tag = document.createElement('meta');
+    document.head.appendChild(tag);
+  }
+  Object.entries(attributes).forEach(([key, value]) => tag.setAttribute(key, value));
+}
+
 export default function Layout() {
   const { data } = useSiteData();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -23,25 +32,35 @@ export default function Layout() {
 
   useEffect(() => {
     const root = document.documentElement;
-    if (darkMode) {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
+    if (darkMode) root.classList.add('dark');
+    else root.classList.remove('dark');
     localStorage.setItem('portfolio-theme', darkMode ? 'dark' : 'light');
   }, [darkMode]);
 
   useEffect(() => {
-    if (data?.siteSettings?.siteTitle) {
-      document.title = data.siteSettings.siteTitle;
-      const descriptionTag = document.querySelector('meta[name="description"]') || document.createElement('meta');
-      descriptionTag.setAttribute('name', 'description');
-      descriptionTag.setAttribute('content', data.siteSettings.siteDescription || '');
-      if (!descriptionTag.parentNode) document.head.appendChild(descriptionTag);
+    if (!data?.siteSettings) return;
+
+    document.title = data.siteSettings.siteTitle || 'Portfolio';
+    upsertMeta('meta[name="description"]', { name: 'description', content: data.siteSettings.siteDescription || '' });
+    upsertMeta('meta[property="og:title"]', { property: 'og:title', content: data.siteSettings.siteTitle || '' });
+    upsertMeta('meta[property="og:description"]', { property: 'og:description', content: data.siteSettings.siteDescription || '' });
+    if (data.siteSettings.ogImageUrl) {
+      upsertMeta('meta[property="og:image"]', { property: 'og:image', content: data.siteSettings.ogImageUrl });
+    }
+
+    if (data.siteSettings.canonicalUrl) {
+      let canonical = document.head.querySelector('link[rel="canonical"]');
+      if (!canonical) {
+        canonical = document.createElement('link');
+        canonical.setAttribute('rel', 'canonical');
+        document.head.appendChild(canonical);
+      }
+      canonical.setAttribute('href', data.siteSettings.canonicalUrl);
     }
   }, [data]);
 
   const profile = useMemo(() => data?.profile || {}, [data]);
+  const resumeUrl = profile.resumeUrl || data?.siteSettings?.resumeUrl || '/assets/Karan_Singh_Resume.pdf';
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
@@ -62,7 +81,7 @@ export default function Layout() {
               </a>
             ))}
             <a
-              href={profile.resumeUrl || data?.siteSettings?.resumeUrl || '/assets/Karan_Singh_Resume.pdf'}
+              href={resumeUrl}
               target="_blank"
               rel="noreferrer"
               className="rounded-full bg-teal-400 px-5 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-teal-300"
@@ -92,7 +111,7 @@ export default function Layout() {
                 </a>
               ))}
               <a
-                href={profile.resumeUrl || data?.siteSettings?.resumeUrl || '/assets/Karan_Singh_Resume.pdf'}
+                href={resumeUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="rounded-full bg-teal-400 px-5 py-2.5 text-center text-sm font-semibold text-slate-950"

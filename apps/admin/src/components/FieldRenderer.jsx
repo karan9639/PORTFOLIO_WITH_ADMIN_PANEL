@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useUploadFile } from '../hooks/useResource.js';
 import toast from 'react-hot-toast';
 
@@ -10,9 +9,10 @@ export default function FieldRenderer({ field, register, errors, watch, setValue
     const file = event.target.files?.[0];
     if (!file) return;
     try {
-      const uploaded = await uploader.mutateAsync(file);
+      const kind = field.fileKind || (file.type === 'application/pdf' || field.accept === 'application/pdf' ? 'resume' : 'image');
+      const uploaded = await uploader.mutateAsync({ file, kind });
       setValue(field.name, uploaded.url, { shouldDirty: true, shouldValidate: true });
-      toast.success(`${field.label} uploaded`);
+      toast.success(`${field.label} uploaded via ${uploaded.provider === 'cloudinary' ? 'Cloudinary' : 'local storage'}`);
     } catch (error) {
       toast.error(error?.response?.data?.message || 'Upload failed');
     }
@@ -54,6 +54,8 @@ export default function FieldRenderer({ field, register, errors, watch, setValue
   }
 
   if (field.type === 'file-url') {
+    const isPdf = value?.toLowerCase?.().includes('.pdf') || field.accept === 'application/pdf' || field.fileKind === 'resume';
+
     return (
       <div>
         <label className="admin-label">{field.label}</label>
@@ -64,7 +66,19 @@ export default function FieldRenderer({ field, register, errors, watch, setValue
             <input type="file" className="hidden" accept={field.accept || 'image/*,application/pdf'} onChange={handleFileChange} />
           </label>
         </div>
-        {value ? <p className="mt-2 break-all text-xs text-slate-500">{value}</p> : null}
+        {value ? (
+          <div className="mt-3 rounded-2xl border border-white/10 bg-white/5 p-3">
+            <p className="break-all text-xs text-slate-500">{value}</p>
+            {isPdf ? (
+              <a href={value} target="_blank" rel="noreferrer" className="mt-2 inline-flex text-sm text-teal-200 hover:text-teal-100">
+                View uploaded resume
+              </a>
+            ) : (
+              <img src={value} alt={field.label} className="mt-3 h-28 w-28 rounded-2xl object-cover" />
+            )}
+          </div>
+        ) : null}
+        {field.help ? <p className="mt-2 text-xs text-slate-500">{field.help}</p> : null}
         {errors[field.name] ? <p className="mt-2 text-sm text-rose-300">{errors[field.name]?.message}</p> : null}
       </div>
     );

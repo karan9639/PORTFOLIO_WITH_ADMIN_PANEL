@@ -7,6 +7,8 @@ const schema = createSingletonSchema({
   title: { type: String, required: true },
   highlightedName: { type: String, required: true },
   description: { type: String, required: true },
+  availabilityNote: { type: String, default: '' },
+  supportingPoints: [{ type: String }],
   primaryCtaText: { type: String, default: 'View projects' },
   primaryCtaLink: { type: String, default: '#projects' },
   secondaryCtaText: { type: String, default: 'Contact me' },

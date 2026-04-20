@@ -5,6 +5,7 @@ const fields = [
   { name: 'title', label: 'Title', required: true },
   { name: 'icon', label: 'Icon name', help: 'Examples: sparkles, server, layout-dashboard' },
   { name: 'description', label: 'Description', type: 'textarea', required: true, span: 2 },
+  { name: 'deliverables', label: 'Deliverables', type: 'csv', span: 2, help: 'Comma-separated outcomes shown as chips' },
   { name: 'sortOrder', label: 'Sort order', type: 'number' },
 ];
 

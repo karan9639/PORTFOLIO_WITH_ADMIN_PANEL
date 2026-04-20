@@ -15,7 +15,12 @@ const env = {
   defaultAdminName: process.env.DEFAULT_ADMIN_NAME || 'Portfolio Admin',
   defaultAdminEmail: process.env.DEFAULT_ADMIN_EMAIL || 'admin@example.com',
   defaultAdminPassword: process.env.DEFAULT_ADMIN_PASSWORD || 'Admin@123456',
+  cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME || '',
+  cloudinaryApiKey: process.env.CLOUDINARY_API_KEY || '',
+  cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET || '',
+  cloudinaryFolder: process.env.CLOUDINARY_FOLDER || 'premium-portfolio-platform',
 };
 
 export const isProduction = env.nodeEnv === 'production';
+export const isCloudinaryConfigured = Boolean(env.cloudinaryCloudName && env.cloudinaryApiKey && env.cloudinaryApiSecret);
 export default env;

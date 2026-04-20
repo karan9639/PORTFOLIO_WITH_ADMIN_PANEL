@@ -7,6 +7,7 @@ const schema = createBaseCollectionSchema({
   issuedAt: { type: String, default: '' },
   credentialId: { type: String, default: '' },
   credentialUrl: { type: String, default: '' },
+  skillsCovered: [{ type: String }],
   description: { type: String, default: '' },
 });
 

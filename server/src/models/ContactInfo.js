@@ -6,6 +6,8 @@ const schema = createSingletonSchema({
   phone: { type: String, default: '' },
   location: { type: String, default: '' },
   timezone: { type: String, default: 'Asia/Kolkata' },
+  preferredContactMethod: { type: String, default: '' },
+  responseTime: { type: String, default: '' },
   calendlyUrl: { type: String, default: '' },
   whatsappUrl: { type: String, default: '' },
   intro: { type: String, default: '' },

@@ -12,6 +12,12 @@ const schema = createSingletonSchema({
   resumeUrl: { type: String, default: '' },
   yearsExperience: { type: String, default: '' },
   availability: { type: String, default: '' },
+  currentRole: { type: String, default: '' },
+  currentCompany: { type: String, default: '' },
+  preferredRoles: [{ type: String }],
+  specializations: [{ type: String }],
+  currentlyLearning: [{ type: String }],
+  languages: [{ label: String, value: String }],
   shortBio: { type: String, default: '' },
   stats: [{ label: String, value: String }],
 });

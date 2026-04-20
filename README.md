@@ -6,7 +6,7 @@ A production-style full-stack portfolio platform built from your uploaded codeba
 
 - `apps/web` — premium public portfolio built with React, Vite, Tailwind, React Query, React Hook Form, and Zod
 - `apps/admin` — secure admin dashboard for managing portfolio content and messages
-- `server` — Express + MongoDB API with JWT auth, httpOnly cookies, rate limiting, validation, uploads, and seed data
+- `server` — Express + MongoDB API with JWT auth, httpOnly cookies, rate limiting, validation, and Cloudinary-ready uploads
 
 ## Architecture
 
@@ -27,13 +27,15 @@ premium-portfolio-platform/
 - project detail pages
 - backend-powered contact form
 - resume and social links managed from the admin panel
+- richer profile fields such as languages, specializations, preferred roles, current learning focus, and project metadata
 
 ### Admin dashboard
 - secure admin login/logout
 - singleton content editing for profile, hero, about, contact info, and site settings
 - CRUD for projects, services, social links, skill categories, skills, experience, education, certifications, and achievements
 - inbox for portfolio messages
-- image / PDF upload endpoint with local storage
+- image and PDF upload endpoint
+- Cloudinary support for images and resume uploads
 
 ### Backend
 - Express API
@@ -41,7 +43,7 @@ premium-portfolio-platform/
 - httpOnly cookie auth
 - zod validation
 - rate limiting for auth and public message routes
-- static file uploads
+- Cloudinary-first uploads with local fallback when Cloudinary env vars are missing
 - seed script and default admin bootstrap
 
 ## Setup
@@ -64,7 +66,19 @@ cp apps/web/.env.example apps/web/.env
 cp apps/admin/.env.example apps/admin/.env
 ```
 
-### 3) Start MongoDB
+### 3) Configure Cloudinary in `server/.env`
+
+```env
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
+CLOUDINARY_FOLDER=premium-portfolio-platform
+```
+
+If Cloudinary values are present, image and resume uploads go to Cloudinary.
+If they are missing, uploads fall back to `server/uploads` locally.
+
+### 4) Start MongoDB
 
 Make sure MongoDB is running locally.
 
@@ -74,7 +88,7 @@ Default URI used by the server:
 mongodb://127.0.0.1:27017/premium_portfolio
 ```
 
-### 4) Seed the database (optional but recommended)
+### 5) Seed the database (recommended)
 
 ```bash
 npm run seed
@@ -82,7 +96,7 @@ npm run seed
 
 The server also auto-seeds default content on first boot.
 
-### 5) Run the apps
+### 6) Run the apps
 
 Open three terminals from the project root.
 
@@ -138,6 +152,9 @@ Required environment variables:
 - `CLIENT_URL`
 - `ADMIN_URL`
 - `SERVER_URL`
+- `CLOUDINARY_CLOUD_NAME`
+- `CLOUDINARY_API_KEY`
+- `CLOUDINARY_API_SECRET`
 - `DEFAULT_ADMIN_EMAIL`
 - `DEFAULT_ADMIN_PASSWORD`
 
@@ -150,21 +167,18 @@ Update:
 
 Use your deployed API URL for `VITE_API_URL`.
 
-### Uploads
-Current implementation stores uploads locally in `server/uploads`.
-
-For production, move uploads to durable cloud storage such as Cloudinary, S3, or similar.
-
 ## Main improvements over the original uploaded code
 
 - replaced hardcoded portfolio content with database-driven content
 - removed insecure client-side EmailJS usage
 - added backend API and admin authentication
 - introduced CRUD content operations
+- added richer professional profile fields such as languages, specializations, current learning focus, project type, status, and experience stack
+- added Cloudinary support for image and resume uploads
 - created a premium one-page portfolio and project detail flow
 - added setup structure for professional maintenance and future extension
 
 ## Notes
 
-- The code is intentionally modular so you can extend it to add testimonials, blog posts, or analytics later.
-- The upload flow is local-first for easier setup; cloud storage can be swapped in later.
+- The code is modular so you can extend it to add testimonials, blog posts, or analytics later.
+- Cloudinary is the recommended production upload provider and is already wired into the server.

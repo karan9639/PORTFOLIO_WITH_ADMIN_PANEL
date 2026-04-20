@@ -1,15 +1,15 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useMemo } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import toast from 'react-hot-toast';
 import { DynamicIcon } from '../components/IconMap.jsx';
 import LoadingScreen from '../components/LoadingScreen.jsx';
 import SectionHeading from '../components/SectionHeading.jsx';
 import { useSiteData } from '../hooks/useSiteData.js';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useSubmitMessage } from '../hooks/useSubmitMessage.js';
-import toast from 'react-hot-toast';
 
 const messageSchema = z.object({
   name: z.string().min(2, 'Please enter your name'),
@@ -17,6 +17,40 @@ const messageSchema = z.object({
   subject: z.string().optional(),
   message: z.string().min(10, 'Tell me a little more about your project'),
 });
+
+function ChipList({ items = [], tone = 'default' }) {
+  if (!items?.length) return null;
+  const styles = tone === 'accent'
+    ? 'border-teal-400/20 bg-teal-400/10 text-teal-100'
+    : 'border-white/10 bg-white/5 text-slate-300';
+
+  return (
+    <div className="mt-4 flex flex-wrap gap-2">
+      {items.map((item, index) => (
+        <span key={`${item}-${index}`} className={`rounded-full border px-3 py-1 text-xs ${styles}`}>
+          {item}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function PairList({ title, items = [] }) {
+  if (!items?.length) return null;
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+      <div className="text-sm font-medium text-white">{title}</div>
+      <div className="mt-4 space-y-3 text-sm">
+        {items.map((item, index) => (
+          <div key={`${item.label}-${index}`} className="flex items-center justify-between gap-4 border-b border-white/5 pb-3 last:border-b-0 last:pb-0">
+            <span className="text-slate-400">{item.label}</span>
+            <span className="text-right text-slate-200">{item.value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function Hero({ hero, profile, socialLinks }) {
   return (
@@ -44,6 +78,7 @@ function Hero({ hero, profile, socialLinks }) {
               {hero?.secondaryCtaText || 'Contact me'}
             </a>
           </div>
+          <ChipList items={hero?.supportingPoints} tone="accent" />
           <div className="mt-8 flex flex-wrap gap-6 text-sm text-slate-400">
             {(socialLinks || []).map((link) => (
               <a key={link._id} href={link.url} target="_blank" rel="noreferrer" className="flex items-center gap-2 transition hover:text-teal-200">
@@ -62,8 +97,8 @@ function Hero({ hero, profile, socialLinks }) {
             />
             <div className="absolute bottom-8 left-8 right-8 rounded-3xl border border-white/10 bg-slate-950/70 p-5 backdrop-blur-xl">
               <div className="text-xs uppercase tracking-[0.3em] text-teal-200">Current focus</div>
-              <div className="mt-2 text-lg font-semibold text-white">{profile?.headline}</div>
-              <div className="mt-1 text-sm text-slate-400">{profile?.availability}</div>
+              <div className="mt-2 text-lg font-semibold text-white">{profile?.currentRole || profile?.headline}</div>
+              <div className="mt-1 text-sm text-slate-400">{hero?.availabilityNote || profile?.availability}</div>
             </div>
           </div>
         </div>
@@ -90,12 +125,12 @@ function Stats({ stats }) {
   );
 }
 
-function About({ about }) {
+function About({ about, profile }) {
   return (
     <section id="about" className="section-spacing">
       <div className="container-shell grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="glass-card overflow-hidden rounded-[2rem] p-4 shadow-soft">
-          <img src={about?.profileImageUrl || '/assets/kvs.svg'} alt="About visual" className="h-full min-h-[340px] w-full rounded-[1.5rem] object-cover" />
+          <img src={about?.profileImageUrl || profile?.avatarUrl || '/assets/kvs.svg'} alt="About visual" className="h-full min-h-[340px] w-full rounded-[1.5rem] object-cover" />
         </div>
         <div>
           <div className="section-kicker">About</div>
@@ -103,6 +138,7 @@ function About({ about }) {
           <p className="mt-5 text-lg leading-8 text-slate-300">{about?.summary}</p>
           <p className="mt-5 leading-8 text-slate-400">{about?.story}</p>
           <p className="mt-5 leading-8 text-slate-400">{about?.approach}</p>
+          <ChipList items={about?.strengths} />
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
             {(about?.facts || []).map((item, index) => (
               <div key={`${item.label}-${index}`} className="rounded-2xl border border-white/10 bg-white/5 p-4">
@@ -110,6 +146,19 @@ function About({ about }) {
                 <div className="mt-1 font-medium text-white">{item.value}</div>
               </div>
             ))}
+          </div>
+          <div className="mt-8 grid gap-4 lg:grid-cols-2">
+            <PairList title="Languages" items={profile?.languages} />
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+              <div className="text-sm font-medium text-white">Currently learning</div>
+              <ChipList items={profile?.currentlyLearning} />
+              {about?.interests?.length ? (
+                <>
+                  <div className="mt-5 text-sm font-medium text-white">Interests</div>
+                  <ChipList items={about.interests} />
+                </>
+              ) : null}
+            </div>
           </div>
         </div>
       </div>
@@ -130,6 +179,7 @@ function Services({ services }) {
               </div>
               <h3 className="mt-5 text-xl font-semibold text-white">{service.title}</h3>
               <p className="mt-3 leading-7 text-slate-400">{service.description}</p>
+              <ChipList items={service.deliverables} />
             </div>
           ))}
         </div>
@@ -138,11 +188,17 @@ function Services({ services }) {
   );
 }
 
-function Skills({ categories }) {
+function Skills({ categories, profile }) {
   return (
     <section id="skills" className="section-spacing">
       <div className="container-shell">
         <SectionHeading kicker="Skills" title="A practical stack for shipping complete products" description="I enjoy working across the frontend-backend boundary, with a strong bias toward clean architecture and user-friendly interfaces." />
+        {profile?.specializations?.length ? (
+          <div className="mb-6 rounded-[2rem] border border-white/10 bg-white/5 p-6">
+            <div className="text-sm font-medium text-white">Specializations</div>
+            <ChipList items={profile.specializations} />
+          </div>
+        ) : null}
         <div className="grid gap-6 lg:grid-cols-3">
           {categories.map((category) => (
             <div key={category._id} className="glass-card rounded-[2rem] p-6 shadow-soft">
@@ -182,6 +238,8 @@ function Projects({ projects }) {
                 <div className="flex flex-wrap items-center gap-3">
                   {project.featured ? <span className="rounded-full bg-teal-400/15 px-3 py-1 text-xs font-medium text-teal-200">Featured</span> : null}
                   {project.year ? <span className="text-xs uppercase tracking-[0.3em] text-slate-500">{project.year}</span> : null}
+                  {project.projectType ? <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-slate-300">{project.projectType}</span> : null}
+                  {project.status ? <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-200">{project.status}</span> : null}
                 </div>
                 <h3 className="mt-4 text-2xl font-semibold text-white">{project.title}</h3>
                 <p className="mt-3 leading-7 text-slate-400">{project.excerpt}</p>
@@ -219,9 +277,13 @@ function Experience({ experiences, education, certifications }) {
                     <h3 className="mt-2 text-xl font-semibold text-white">{item.role}</h3>
                     <p className="mt-2 text-sm text-slate-400">{item.period} · {item.location}</p>
                   </div>
-                  {item.current ? <span className="rounded-full bg-emerald-400/15 px-3 py-1 text-xs text-emerald-200">Current</span> : null}
+                  <div className="flex flex-wrap gap-2">
+                    {item.employmentType ? <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-slate-300">{item.employmentType}</span> : null}
+                    {item.current ? <span className="rounded-full bg-emerald-400/15 px-3 py-1 text-xs text-emerald-200">Current</span> : null}
+                  </div>
                 </div>
                 <p className="mt-4 leading-7 text-slate-400">{item.description}</p>
+                <ChipList items={item.stack} />
                 {!!item.highlights?.length && (
                   <ul className="mt-4 space-y-2 text-sm text-slate-300">
                     {item.highlights.map((highlight, index) => (
@@ -254,6 +316,7 @@ function Experience({ experiences, education, certifications }) {
                     <div className="font-medium text-white">{item.title}</div>
                     <div className="mt-1 text-sm text-slate-400">{item.issuer} · {item.issuedAt}</div>
                     <p className="mt-2 text-sm leading-6 text-slate-400">{item.description}</p>
+                    <ChipList items={item.skillsCovered} />
                   </div>
                 ))}
               </div>
@@ -328,6 +391,18 @@ function Contact({ profile, contactInfo }) {
               <div className="text-slate-500">Availability</div>
               <div className="mt-1 text-white">{profile?.availability}</div>
             </div>
+            {contactInfo?.preferredContactMethod ? (
+              <div>
+                <div className="text-slate-500">Preferred contact method</div>
+                <div className="mt-1 text-white">{contactInfo.preferredContactMethod}</div>
+              </div>
+            ) : null}
+            {contactInfo?.responseTime ? (
+              <div>
+                <div className="text-slate-500">Typical response time</div>
+                <div className="mt-1 text-white">{contactInfo.responseTime}</div>
+              </div>
+            ) : null}
           </div>
         </div>
 
@@ -372,9 +447,9 @@ export default function HomePage() {
     <main>
       <Hero hero={data.hero} profile={data.profile} socialLinks={data.socialLinks} />
       <Stats stats={data.profile?.stats} />
-      <About about={data.about} />
+      <About about={data.about} profile={data.profile} />
       <Services services={data.services || []} />
-      <Skills categories={data.skillCategories || []} />
+      <Skills categories={data.skillCategories || []} profile={data.profile} />
       <Projects projects={projects} />
       <Experience experiences={data.experiences || []} education={data.education || []} certifications={data.certifications || []} />
       <Achievements achievements={data.achievements || []} />
