@@ -1,0 +1,19 @@
+{
+  "name": "premium-portfolio-platform",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/web",
+    "apps/admin",
+    "server"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace @portfolio/web",
+    "dev:admin": "npm run dev --workspace @portfolio/admin",
+    "dev:server": "npm run dev --workspace @portfolio/server",
+    "build:web": "npm run build --workspace @portfolio/web",
+    "build:admin": "npm run build --workspace @portfolio/admin",
+    "build:server": "npm run build --workspace @portfolio/server",
+    "seed": "npm run seed --workspace @portfolio/server"
+  }
+}
