@@ -1,29 +1,92 @@
-import mongoose from 'mongoose';
-import { createBaseCollectionSchema } from './helpers.js';
-import { slugify } from '../utils/slugify.js';
+import mongoose from "mongoose";
 
-const schema = createBaseCollectionSchema({
-  title: { type: String, required: true },
-  slug: { type: String, unique: true },
-  excerpt: { type: String, required: true },
-  description: { type: String, required: true },
-  imageUrl: { type: String, default: '' },
-  technologies: [{ type: String }],
-  githubUrl: { type: String, default: '' },
-  liveUrl: { type: String, default: '' },
-  caseStudyUrl: { type: String, default: '' },
-  role: { type: String, default: '' },
-  year: { type: String, default: '' },
-  duration: { type: String, default: '' },
-  projectType: { type: String, default: '' },
-  status: { type: String, default: '' },
-  featured: { type: Boolean, default: false },
-  highlights: [{ type: String }],
-});
+function slugify(value = "") {
+  return value
+    .toString()
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
 
-schema.pre('validate', function(next) {
-  if (!this.slug && this.title) this.slug = slugify(this.title);
+const projectSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true,
+    },
+    summary: {
+      type: String,
+      default: "",
+    },
+    description: {
+      type: String,
+      default: "",
+    },
+    imageUrl: {
+      type: String,
+      default: "",
+    },
+    liveUrl: {
+      type: String,
+      default: "",
+    },
+    githubUrl: {
+      type: String,
+      default: "",
+    },
+    caseStudyUrl: {
+      type: String,
+      default: "",
+    },
+    category: {
+      type: String,
+      default: "",
+    },
+    status: {
+      type: String,
+      default: "",
+    },
+    duration: {
+      type: String,
+      default: "",
+    },
+    techStack: {
+      type: [String],
+      default: [],
+    },
+    highlights: {
+      type: [String],
+      default: [],
+    },
+    featured: {
+      type: Boolean,
+      default: false,
+    },
+    sortOrder: {
+      type: Number,
+      default: 0,
+    },
+  },
+  { timestamps: true },
+);
+
+projectSchema.pre("validate", function (next) {
+  if ((!this.slug || !this.slug.trim()) && this.title) {
+    this.slug = slugify(this.title);
+  } else if (this.slug) {
+    this.slug = slugify(this.slug);
+  }
   next();
 });
 
-export const Project = mongoose.model('Project', schema);
+export default mongoose.model("Project", projectSchema);
