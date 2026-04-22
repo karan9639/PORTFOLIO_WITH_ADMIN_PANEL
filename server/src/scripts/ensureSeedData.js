@@ -9,7 +9,7 @@ import { SocialLink } from "../models/SocialLink.js";
 import { Service } from "../models/Service.js";
 import { SkillCategory } from "../models/SkillCategory.js";
 import { Skill } from "../models/Skill.js";
-import Project from "../models/Project.js";
+import { Project } from "../models/Project.js";
 import { Experience } from "../models/Experience.js";
 import { Education } from "../models/Education.js";
 import { Certification } from "../models/Certification.js";
