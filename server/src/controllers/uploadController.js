@@ -32,7 +32,7 @@ function uploadToCloudinary(file, folder) {
 }
 
 async function uploadLocally(file) {
-  const uploadsDir = path.resolve(process.cwd(), 'server', 'uploads');
+  const uploadsDir = path.resolve(process.cwd(), "uploads");
   await fs.mkdir(uploadsDir, { recursive: true });
   const filename = `${Date.now()}-${sanitizeFilename(file.originalname)}`;
   const filePath = path.join(uploadsDir, filename);
